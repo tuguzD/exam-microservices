@@ -133,13 +133,13 @@ services:
 
   postservice:
     image: lolka123/postservice
-    container_name: service-post
+    container_name: servicepost
     depends_on:
       - mongopost
     links:
-      - mongopost    
+      - mongopost
   mongopost:
     image: 'mongo'
-    container_name: mongo-post
+    container_name: mongopost
     volumes:
       - /home/sinoed/data/db-post:/data/db
