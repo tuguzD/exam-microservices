@@ -1,0 +1,218 @@
+{
+  "$schema": "https://www.krakend.io/schema/v3.json",
+  "version": 3,
+  "name": "KrakenD — API Gateway",
+  "timeout": "3000ms",
+  "cache_ttl": "300s",
+  "output_encoding": "json",
+  "disable_rest": true,
+  "endpoints": [
+    {
+      "endpoint": "/v1/blogs",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "input_query_strings": [ "name", "id" ],
+      "backend": [
+        {
+          "url_pattern": "/blogs",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "disable_host_sanitize": false,
+          "host": [ "http://blogs:8080" ],
+          "is_collection": true,
+          "target": ""
+        }
+      ]
+    },
+    {
+      "endpoint": "/v1/blogs",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/blogs",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "disable_host_sanitize": false,
+          "host": [ "http://blogs:8080" ]
+        }
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "RS256",
+          "jwk_url": "http://keycloak:8080/realms/krakend/protocol/openid-connect/certs",
+          "disable_jwk_security": true
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/blogs",
+      "method": "PUT",
+      "output_encoding": "no-op",
+      "input_query_strings": [ "id" ],
+      "backend": [
+        {
+          "url_pattern": "/blogs",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "PUT",
+          "disable_host_sanitize": false,
+          "host": [ "http://blogs:8080" ]
+        }
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "RS256",
+          "jwk_url": "http://keycloak:8080/realms/krakend/protocol/openid-connect/certs",
+          "disable_jwk_security": true
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/blogs",
+      "method": "DELETE",
+      "output_encoding": "no-op",
+      "input_query_strings": [ "id" ],
+      "backend": [
+        {
+          "url_pattern": "/blogs",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "DELETE",
+          "disable_host_sanitize": false,
+          "host": [ "http://blogs:8080" ]
+        }
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "RS256",
+          "jwk_url": "http://keycloak:8080/realms/krakend/protocol/openid-connect/certs",
+          "disable_jwk_security": true
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/tasks",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "input_query_strings": [ "name", "id", "post_id", "description", "is_completed", "date_to_publish" ],
+      "backend": [
+        {
+          "url_pattern": "/",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "disable_host_sanitize": false,
+          "host": [ "http://tasks:8080" ],
+          "is_collection": true,
+          "target": ""
+        }
+      ]
+    },
+    {
+      "endpoint": "/v1/tasks",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "disable_host_sanitize": false,
+          "host": [ "http://tasks:8080" ]
+        }
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "RS256",
+          "jwk_url": "http://keycloak:8080/realms/krakend/protocol/openid-connect/certs",
+          "disable_jwk_security": true
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/tasks/{id}",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/{id}",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "disable_host_sanitize": false,
+          "host": [ "http://tasks:8080" ]
+        }
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "RS256",
+          "jwk_url": "http://keycloak:8080/realms/krakend/protocol/openid-connect/certs",
+          "disable_jwk_security": true
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/tasks/{id}",
+      "method": "DELETE",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/{id}",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "DELETE",
+          "disable_host_sanitize": false,
+          "host": [ "http://tasks:8080" ]
+        }
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "RS256",
+          "jwk_url": "http://keycloak:8080/realms/krakend/protocol/openid-connect/certs",
+          "disable_jwk_security": true
+        }
+      }
+    }
+  ],
+  "sequential_start": true,
+  "extra_config": {
+    "telemetry/opencensus": {
+      "sample_rate": 100,
+      "reporting_period": 0,
+      "enabled_layers": {
+        "backend": true,
+        "router": true
+      },
+      "exporters": {
+        "jaeger": {
+          "endpoint": "http://jaeger:14268/api/traces",
+          "service_name": "krakend"
+        },
+        "prometheus": {
+          "port": 9091,
+          "namespace": "krakend",
+          "tag_host": false,
+          "tag_path": true,
+          "tag_method": true,
+          "tag_statuscode": false
+        }
+      }
+    },
+    "telemetry/influx": {
+      "address": "http://influxdb:8086",
+      "ttl": "25s",
+      "buffer_size": 100,
+      "db": "krakend",
+      "username": "krakend",
+      "password": "krakend"
+    },
+    "telemetry/metrics": {
+      "collection_time": "15s",
+      "listen_address": ":8090"
+    }
+  }
+}
