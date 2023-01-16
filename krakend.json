@@ -2,7 +2,7 @@
   "$schema": "https://www.krakend.io/schema/v3.json",
   "version": 3,
   "name": "KrakenD — API Gateway",
-  "timeout": "3000ms",
+  "timeout": "40000ms",
   "cache_ttl": "300s",
   "output_encoding": "json",
   "disable_rest": true,
@@ -176,7 +176,52 @@
           "disable_jwk_security": true
         }
       }
-    }
+    },
+    {
+         "endpoint":"/news_consume",
+         "backend":[
+            {
+               "extra_config": {
+                 "backend/amqp/consumer": {
+                   "name": "news",
+                   "exchange": "news-exchange",
+                   "durable":true,
+                   "delete":false,
+                   "no_wait":true,
+                   "no_local":true,
+                   "routing_key": ["#"],
+                   "prefetch_count":10
+                }
+               },
+               "host":[
+                  "amqp://rabbitmq:5672"
+               ],
+               "disable_host_sanitize":true,
+               "encoding":"text"
+            }
+         ]
+      },
+      {
+         "endpoint":"/news",
+         "input_query_strings": [
+           "search_query",
+           "max_size"
+         ],
+         "method":"GET",
+         "backend":[
+            {
+               "host":[
+                  "service-scraper:8080"
+               ],
+               "method":"GET",
+               "encoding":"json",
+               "url_pattern":"/search/news",
+               "mapping":{
+                  "content":"service-scraper"
+               }
+            }
+         ]
+      }
   ],
   "sequential_start": true,
   "extra_config": {
