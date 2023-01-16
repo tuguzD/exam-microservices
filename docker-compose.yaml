@@ -130,3 +130,16 @@ services:
      interval: 30s
      timeout: 30s
      retries: 3
+
+  postservice:
+    image: lolka123/postservice
+    container_name: service-post
+    depends_on:
+      - mongopost
+    links:
+      - mongopost    
+  mongopost:
+    image: 'mongo'
+    container_name: mongo-post
+    volumes:
+      - /home/sinoed/data/db-post:/data/db

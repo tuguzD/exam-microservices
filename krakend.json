@@ -221,7 +221,93 @@
                }
             }
          ]
-      }
+      },
+    {
+      "endpoint": "/api/post",
+      "output_encoding": "no-op",
+      "method": "GET",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "host": [
+            "postservice:8080"
+          ],
+          "method": "GET",
+          "encoding": "string",
+          "url_pattern": "/api/post"
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/post/search",
+      "output_encoding": "no-op",
+      "method": "GET",
+      "input_query_strings": [
+        "id"
+      ],
+      "backend": [
+        {
+          "encoding": "no-op",
+          "host": [
+            "postservice:8080"
+          ],
+          "method": "GET",
+          "encoding": "string",
+          "url_pattern": "/api/post/search"
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/post",
+      "output_encoding": "no-op",
+      "method": "POST",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "host": [
+            "postservice:8080"
+          ],
+          "method": "POST",
+          "encoding": "string",
+          "url_pattern": "/api/post"
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/post/update",
+      "output_encoding": "no-op",
+      "method": "POST",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "host": [
+            "postservice:8080"
+          ],
+          "method": "POST",
+          "encoding": "string",
+          "url_pattern": "/api/post/update"
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/post/delete",
+      "output_encoding": "no-op",
+      "method": "DELETE",
+      "input_query_strings": [
+        "id"
+      ],
+      "backend": [
+        {
+          "encoding": "no-op",
+          "host": [
+            "postservice:8080"
+          ],
+          "method": "DELETE",
+          "encoding": "string",
+          "url_pattern": "/api/post/delete"
+        }
+      ]
+    }
   ],
   "sequential_start": true,
   "extra_config": {
