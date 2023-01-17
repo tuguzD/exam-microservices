@@ -4,6 +4,10 @@ services:
     image: devopsfaith/krakend:latest
     depends_on:
       - blogs
+      - users
+      - tasks
+      - service-scraper
+      - postservice
       - jaeger
       - prometheus
       - grafana
@@ -63,9 +67,9 @@ services:
       - ./keycloak/realm.json:/opt/keycloak/data/import/realm.json
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8080/health" ]
-      interval: 10s
+      interval: 15s
       timeout: 10s
-      retries: 10
+      retries: 15
 
   users:
     image: 0damir1tugushev/exam-user
@@ -79,12 +83,13 @@ services:
       mongo-blogs:
         condition: service_healthy
     environment:
+      - TASKS_URL=http://tasks:8080
       - CONNECTION_URI=mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongo-blogs:27017/?authSource=admin
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8080/health" ]
-      interval: 10s
+      interval: 3s
       timeout: 10s
-      retries: 5
+      retries: 10
   mongo-blogs:
     image: mongo:latest
     environment:
@@ -92,9 +97,9 @@ services:
       - MONGO_INITDB_ROOT_PASSWORD=$MONGO_INITDB_ROOT_PASSWORD
     healthcheck:
       test: echo 'db.runCommand({serverStatus:1}).ok' | mongosh admin -u ${MONGO_INITDB_ROOT_USERNAME} -p ${MONGO_INITDB_ROOT_PASSWORD} --quiet | grep 1
-      interval: 10s
+      interval: 3s
       timeout: 10s
-      retries: 5
+      retries: 10
 
   tasks:
     image: tuguzt/service-exam-task
@@ -103,13 +108,13 @@ services:
         condition: service_healthy
     environment:
       - RUST_LOG=$RUST_LOG
-      - DATABASE_URL=mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongo-tasks:27017/?authSource=admin
+      - DATABASE_URI=mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongo-tasks:27017/?authSource=admin
       - POST_SERVICE_URL=http://postservice:8080/api/post
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8080/health" ]
-      interval: 10s
+      interval: 3s
       timeout: 10s
-      retries: 5
+      retries: 10
   mongo-tasks:
     image: mongo:latest
     environment:
@@ -117,9 +122,9 @@ services:
       - MONGO_INITDB_ROOT_PASSWORD=$MONGO_INITDB_ROOT_PASSWORD
     healthcheck:
       test: echo 'db.runCommand({serverStatus:1}).ok' | mongosh admin -u ${MONGO_INITDB_ROOT_USERNAME} -p ${MONGO_INITDB_ROOT_PASSWORD} --quiet | grep 1
-      interval: 10s
+      interval: 3s
       timeout: 10s
-      retries: 5
+      retries: 10
 
   service-scraper:
     image: dannik7771/scraper

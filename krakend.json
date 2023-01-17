@@ -260,7 +260,6 @@
           "encoding": "no-op",
           "host": [ "postservice:8080" ],
           "method": "GET",
-          "encoding": "string",
           "url_pattern": "/api/post"
         }
       ]
@@ -277,7 +276,6 @@
           "encoding": "no-op",
           "host": [ "postservice:8080" ],
           "method": "GET",
-          "encoding": "string",
           "url_pattern": "/api/post/search"
         }
       ]
@@ -291,10 +289,16 @@
           "encoding": "no-op",
           "host": [ "postservice:8080" ],
           "method": "POST",
-          "encoding": "string",
           "url_pattern": "/api/post"
         }
-      ]
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "RS256",
+          "jwk_url": "http://keycloak:8080/realms/krakend/protocol/openid-connect/certs",
+          "disable_jwk_security": true
+        }
+      }
     },
     {
       "endpoint": "/api/post/update",
@@ -305,27 +309,37 @@
           "encoding": "no-op",
           "host": [ "postservice:8080" ],
           "method": "POST",
-          "encoding": "string",
           "url_pattern": "/api/post/update"
         }
-      ]
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "RS256",
+          "jwk_url": "http://keycloak:8080/realms/krakend/protocol/openid-connect/certs",
+          "disable_jwk_security": true
+        }
+      }
     },
     {
       "endpoint": "/api/post/delete",
       "output_encoding": "no-op",
       "method": "DELETE",
-      "input_query_strings": [
-        "id"
-      ],
+      "input_query_strings": [ "id" ],
       "backend": [
         {
           "encoding": "no-op",
           "host": [ "postservice:8080" ],
           "method": "DELETE",
-          "encoding": "string",
           "url_pattern": "/api/post/delete"
         }
-      ]
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "RS256",
+          "jwk_url": "http://keycloak:8080/realms/krakend/protocol/openid-connect/certs",
+          "disable_jwk_security": true
+        }
+      }
     }
   ],
   "sequential_start": true,
