@@ -8,6 +8,36 @@
   "disable_rest": true,
   "endpoints": [
     {
+      "endpoint": "/v1/users/register",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/users/register",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "disable_host_sanitize": false,
+          "host": [ "http://users:8080" ]
+        }
+      ]
+    },
+    {
+      "endpoint": "/v1/users/login",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/users/login",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "disable_host_sanitize": false,
+          "host": [ "http://users:8080" ]
+        }
+      ]
+    },
+    {
       "endpoint": "/v1/blogs",
       "method": "GET",
       "output_encoding": "no-op",
@@ -97,7 +127,10 @@
       "endpoint": "/v1/tasks",
       "method": "GET",
       "output_encoding": "no-op",
-      "input_query_strings": [ "name", "id", "post_id", "description", "is_completed", "date_to_publish" ],
+      "input_query_strings": [
+        "name", "id", "post_id", "description",
+        "is_completed", "date_to_publish"
+      ],
       "backend": [
         {
           "url_pattern": "/",
@@ -178,50 +211,46 @@
       }
     },
     {
-         "endpoint":"/news_consume",
-         "backend":[
-            {
-               "extra_config": {
-                 "backend/amqp/consumer": {
-                   "name": "news",
-                   "exchange": "news-exchange",
-                   "durable":true,
-                   "delete":false,
-                   "no_wait":true,
-                   "no_local":true,
-                   "routing_key": ["#"],
-                   "prefetch_count":10
-                }
-               },
-               "host":[
-                  "amqp://rabbitmq:5672"
-               ],
-               "disable_host_sanitize":true,
-               "encoding":"text"
+      "endpoint": "/news_consume",
+      "backend": [
+        {
+          "extra_config": {
+            "backend/amqp/consumer": {
+              "name": "news",
+              "exchange": "news-exchange",
+              "durable": true,
+              "delete": false,
+              "no_wait": true,
+              "no_local": true,
+              "routing_key": [ "#" ],
+              "prefetch_count": 10
             }
-         ]
-      },
-      {
-         "endpoint":"/news",
-         "input_query_strings": [
-           "search_query",
-           "max_size"
-         ],
-         "method":"GET",
-         "backend":[
-            {
-               "host":[
-                  "service-scraper:8080"
-               ],
-               "method":"GET",
-               "encoding":"json",
-               "url_pattern":"/search/news",
-               "mapping":{
-                  "content":"service-scraper"
-               }
-            }
-         ]
-      },
+          },
+          "host": [ "amqp://rabbitmq:5672" ],
+          "disable_host_sanitize": true,
+          "encoding": "text"
+        }
+      ]
+    },
+    {
+      "endpoint": "/news",
+      "input_query_strings": [
+        "search_query",
+        "max_size"
+      ],
+      "method": "GET",
+      "backend": [
+        {
+          "host": [ "service-scraper:8080" ],
+          "method": "GET",
+          "encoding": "json",
+          "url_pattern": "/search/news",
+          "mapping": {
+            "content": "service-scraper"
+          }
+        }
+      ]
+    },
     {
       "endpoint": "/api/post",
       "output_encoding": "no-op",
@@ -229,9 +258,7 @@
       "backend": [
         {
           "encoding": "no-op",
-          "host": [
-            "postservice:8080"
-          ],
+          "host": [ "postservice:8080" ],
           "method": "GET",
           "encoding": "string",
           "url_pattern": "/api/post"
@@ -248,9 +275,7 @@
       "backend": [
         {
           "encoding": "no-op",
-          "host": [
-            "postservice:8080"
-          ],
+          "host": [ "postservice:8080" ],
           "method": "GET",
           "encoding": "string",
           "url_pattern": "/api/post/search"
@@ -264,9 +289,7 @@
       "backend": [
         {
           "encoding": "no-op",
-          "host": [
-            "postservice:8080"
-          ],
+          "host": [ "postservice:8080" ],
           "method": "POST",
           "encoding": "string",
           "url_pattern": "/api/post"
@@ -280,9 +303,7 @@
       "backend": [
         {
           "encoding": "no-op",
-          "host": [
-            "postservice:8080"
-          ],
+          "host": [ "postservice:8080" ],
           "method": "POST",
           "encoding": "string",
           "url_pattern": "/api/post/update"
@@ -299,9 +320,7 @@
       "backend": [
         {
           "encoding": "no-op",
-          "host": [
-            "postservice:8080"
-          ],
+          "host": [ "postservice:8080" ],
           "method": "DELETE",
           "encoding": "string",
           "url_pattern": "/api/post/delete"

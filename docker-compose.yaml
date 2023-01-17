@@ -58,8 +58,20 @@ services:
     command:
       - start-dev
       - --import-realm
+      - --health-enabled=true
     volumes:
       - ./keycloak/realm.json:/opt/keycloak/data/import/realm.json
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/health" ]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+
+  users:
+    image: 0damir1tugushev/exam-user
+    depends_on:
+      keycloak:
+        condition: service_healthy
 
   blogs:
     image: 0damir1tugushev/exam-blog
@@ -115,22 +127,18 @@ services:
     healthcheck:
       interval: 1m30s
       retries: 3
-      test:
-      - CMD
-      - curl
-      - -f
-      - http://localhost:8080
+      test: [ "CMD", "curl", "-f", "http://localhost:8080" ]
       timeout: 10s
   rabbitmq:
-   image: rabbitmq:management
-   ports:
-     - "5672:5672"
-     - "15672:15672"
-   healthcheck:
-     test: rabbitmq-diagnostics -q ping
-     interval: 30s
-     timeout: 30s
-     retries: 3
+    image: rabbitmq:management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 30s
+      retries: 3
 
   postservice:
     image: lolka123/postservice
